@@ -1,0 +1,64 @@
+table.none {
+    border-collapse: collapse;
+    border: none;
+}
+
+th, td.none {
+    border: none;
+}
+
+th.w200 {
+    width: 200px;
+}
+
+td.w200 {
+    width: 200px;
+}
+
+table.data {
+    border-collapse: collapse;
+    border: 1px black solid;
+}
+
+th.data {
+    border: 1px black solid;
+}
+
+td.data {
+    text-align: center;
+    border: 1px black solid;
+}
+
+th.light, td.light {
+    text-align: center;
+    width: 100px;
+    border: none;
+}
+
+span.location {
+    font-size: x-large;
+}
+
+span.btn {
+    display:inline-block;
+    user-select: none;
+    text-align: center;
+    border: 1px black solid;
+    background-color: chartreuse;
+    border-radius: 3px;
+    width: 50px
+}
+
+div.myChart {
+    width: 400px;
+    height: 200px;
+  }
+
+img.led_img {
+    width: 50%;
+    height: 50%;
+}
+
+span.led_status {
+    font-size:xx-large;
+}
