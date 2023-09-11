@@ -3,11 +3,31 @@ from koyomi import Ephem
 import subprocess
 import json
 import random
+import RPi.GPIO as GPIO
+import dht11
+import time
+import subprocess
 
 app = Flask(__name__)
 my_ephem = Ephem()
-dict = {}
-for pin in [26, 19, 13, 6, 5]:
+light_pins = [26, 19, 13, 6, 5]
+temp_pin = 20
+led_pin = 16
+pilot_pin = 21
+pilot_status = False
+sensor = dht11.DHT11(pin=temp_pin)
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.cleanup()
+GPIO.setup(pilot_pin, GPIO.OUT)
+GPIO.setup(led_pin, GPIO.OUT)
+
+for pin in light_pins:
+    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    
+dict = {"temp":0, "humi":0}
+for pin in light_pins:
     dict[str(pin)] = 0
 
 @app.route("/")
@@ -31,23 +51,30 @@ def date_plus():
 
 @app.route("/call_from_ajax", methods = ["POST"])
 def call_from_ajax():
-    # GPIOを持たないときのためのサンプルプログラム
-    #cp = subprocess.run(["echo", "%TIME%"], shell=True, encoding="utf-8", stdout=subprocess.PIPE)
-    #print(cp.stdout)
-    #val = int(cp.stdout[-3:-1])
+    global pilot_status
     cnt = 0
-    dict["cnt"] = cnt
-    for pin in [26, 19, 13, 6, 5]:
-        if random.random() < 0.2:
-            dict[str(pin)] = not dict[str(pin)]
-        if dict[str(pin)]:
+    for pin in light_pins:
+        status = GPIO.input(pin)
+        dict[str(pin)] = status
+        if status:
             cnt += 1
     dict["cnt"] = cnt
     if cnt > 2:
         dict["result"] = "LED ON"
+        GPIO.output(led_pin, True)
     else:
         dict["result"] = "LED OFF"
+        GPIO.output(led_pin, False)
 
+    result = sensor.read()
+    if result.is_valid():
+        dict["temp"] = f"{result.temperature:.1f} ℃"
+        dict["humi"] = f"{result.humidity:.1f} %"
+        print(dict["temp"])
+
+    GPIO.output(pilot_pin, pilot_status)
+    pilot_status = not pilot_status
+    
     return json.dumps(dict)
 
 if __name__ == "__main__":

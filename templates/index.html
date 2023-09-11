@@ -22,7 +22,8 @@
 <tr>
     <th class="data w200">日の出日の入り</th>
     <th class="data w200">月齢</th>
-    <th class="data w200">潮汐</th>
+    <th class="data w200">温湿度</th>
+    <th class="data w200">バッテリー残量</th>
     <th class="data">なんかのグラフ</th>
 </tr>
 <tr>
@@ -42,8 +43,14 @@
     {{ephem.moon_phase}}<br>
     <img src='{{ephem.moon_image}}'>
 </td>
-<td class="data">
-鋭意作成中
+<td class="data"><span class="humi">
+温度：<span id="temp"></span><br>
+湿度：<span id="humi"></span><br>
+</span></td>
+<td>
+<span class="humi">
+どうやって<br>取得する？
+</span>
 </td>
 <td class="data">
     <div class="myChart"><canvas id="myChart"></canvas></div>

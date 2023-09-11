@@ -62,3 +62,7 @@ img.led_img {
 span.led_status {
     font-size:xx-large;
 }
+
+span.humi {
+    font-size:x-large;
+}

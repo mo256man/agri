@@ -27,6 +27,9 @@ function send_to_python() {
             $("#light" + pin).attr("src", "/static/images/" + img);
             //$("#light" + pin).text(received_dict[pin]);
         
+        $("#temp").text(received_dict["temp"]);
+        console.log(received_dict["temp"]);
+        $("#humi").text(received_dict["humi"]);
         if (received_dict["cnt"] > 2) {
           img = "led_on.png";
         } else {
