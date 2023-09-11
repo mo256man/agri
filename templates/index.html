@@ -1,0 +1,85 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+<script src="static/jquery.js"></script>
+<script src="static/dayjs.min.js"></script>
+<script src="static/myscript.js"></script>
+<link rel="stylesheet" type="text/css" href="static/style.css">
+<title>AgriBecky</title>
+</head>
+<body onload="loop();">
+<h1>AgriBecky</h1>
+現在時刻　<span id="time"></span><br>
+<br>
+<span class="location">【 {{ephem.name}} 】</span>（北緯 {{ephem.lat}}度、東経{{ephem.lon}}度　高度{{ephem.location.elev}}m）<br>
+<span class="location">{{ephem.date}} </span>　
+<a href="/date_minus"><span class="btn">－</span></a>　
+<a href="/date_today"><span class="btn">今日</span></a>　
+<a href="/date_plus"><span class="btn">＋</span></a>
+<hr>
+<table class="data">
+<tr>
+    <th class="data w200">日の出日の入り</th>
+    <th class="data w200">月齢</th>
+    <th class="data w200">潮汐</th>
+    <th class="data">なんかのグラフ</th>
+</tr>
+<tr>
+<td class="data">
+    <table>
+        <tr><td>
+        今日の日の出　　{{ephem.today_rising}}<br>
+        今日の日の入り　{{ephem.today_setting}}<br>
+        <br>
+        ↓変わっていない修正要<br>
+        明日の日の出　　{{ephem.tomorrow_rising}}<br>
+        明日の日の入り　{{ephem.tomorrow_setting}}<br>
+        </td></tr>
+    </table>
+</td>
+<td class="data">
+    {{ephem.moon_phase}}<br>
+    <img src='{{ephem.moon_image}}'>
+</td>
+<td class="data">
+鋭意作成中
+</td>
+<td class="data">
+    <div class="myChart"><canvas id="myChart"></canvas></div>
+</td>
+</tr>
+</table>
+<br>
+<br>
+<h2>光センサーの状態からLEDの点灯を制御する</h2>
+<table class="data">
+<tr><th class="data">各光センサーの状態</th><th class="data w200">LED出力</th></tr>
+<tr>
+<td class="data">
+    <table class="none">
+        <tr>
+            <td class="light w200">センサー26</td>
+            <td class="light w200">センサー19</td>
+            <td class="light w200">センサー13</td>
+            <td class="light w200">センサー 6</td>
+            <td class="light w200">センサー 5</td>
+        </tr>
+        <tr>
+            <td class="light w200"><img src="" id="light26"></td>
+            <td class="light w200"><img src="" id="light19"></td>
+            <td class="light w200"><img src="" id="light13"></td>
+            <td class="light w200"><img src="" id="light6"></td>
+            <td class="light w200"><img src="" id="light5"></td>
+        </tr>
+    </table>
+</td>
+<td class="data">
+    <span class="led_status" id="led_status"></span><br>
+    <img class="led_img" src="" id="led_img">
+</td>
+</tr>
+</table>
+
+</body>
+</html>
