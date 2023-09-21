@@ -1,0 +1,117 @@
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+<script src="static/jquery.slim.js"></script>
+<script src="static/dayjs.min.js"></script>
+<script src="static/myscript.js"></script>
+<link rel="stylesheet" type="text/css" href="static/style.css">
+<title>AgriBecky</title>
+</head>
+<body>
+<h1>AgriBecky　電力制御</h1>
+現在時刻　<span id="time"></span><br>
+<br>
+<table>
+<tr><td>バッテリ容量</td><td id="b_volume"></td><td>Wh</td></tr>
+<tr><td>Ah</td><td><input class="right w50" value="100" id="ah"></input></td><td>Ah</td></tr>
+<tr><td>LED消費電力</td><td><input class="right w50" value="12" id="led_pow"></input></td><td>W 'hybrid'</td></tr>
+<tr><td>LED本数</td><td><input class="right w50" value="75" id="led_cnt"></input></td><td>本</td></tr>
+<tr><td>電圧</td><td><input class="right w50" value="24" id="bat_voltage"></input></td><td>V</td></tr>
+<tr><td>バッテリ個数</td><td><input class="right w50" value="8" id="bat_cnt"></input></td><td>個</td></tr>
+<tr><td>朝夕点灯時間</td><td><input class="right w50" value="1.5" id="light_hour"></input></td><td>H → 消費電力 <span id="light_pow"></span> Wh</td></tr>
+<tr><td>パラメーター候補</td><td><select id="param" class="w50">
+    <option value="1710">1710</option>
+    <option value="1500">1500</option>
+    <option value="1350">1350</option>
+    <option value="1260">1260</option>
+    <option value="1200">1200</option>
+    <option value="1100">1100</option>
+    <option value="1050">1050</option>
+    <option value="900">900</option>
+    <option value="870">870</option>
+    <option value="750">750</option>
+    <option value="720">720</option>
+    <option value="600">600</option>
+    <option value="450">450</option>
+    <option value="420">420</option>
+    <option value="200">200</option>
+</select></td><td></td></tr>
+</table>    
+<br>
+<button onclick="calc_power()">計算</button>
+<br><br><br>
+<table class="data">
+<tr>
+    <th colspan="2" rowspan="2" class="data">バッテリ残量</th>
+    <th colspan="5" class="data">発電量（ソーラー＋風力）</th>
+    <th colspan="5" class="data">バッテリ＋発電量</th>
+    <th class="data">一定時間点灯</th>
+    <th colspan="5" class="data">出力可否（<input class="right w50" value="3" id="hours"></input>H）</th>
+</tr>
+<tr>
+    <th class="data w50">真夏<br>100</th><th class="data w50">春秋<br>75</th><th class="data w50">薄曇<br>50</th><th class="data w50">薄曇<br>30</th><th class="data w50">曇り<br>10</th>
+    <th class="data w50">100</th><th class="data w50">75</th><th class="data w50">50</th><th class="data w50">30</th><th class="data w50">10</th>
+    <th class="data">可否判断</th>
+    <th class="data w50">100</th><th class="data w50">75</th><th class="data w50">50</th><th class="data w50">30</th><th class="data w50">10</th>
+</tr>
+<tr>
+    <td class="data right">100%</td><td class="data right" id="bat_100"></td>
+    <td class="data right" id="chg_100_100"></td><td class="data right" id="chg_100_75"></td><td class="data right" id="chg_100_50"></td><td class="data right" id="chg_100_30"></td><td class="data right" id="chg_100_10"></td>
+    <td class="data right" id="sum_100_100"></td><td class="data right" id="sum_100_75"></td><td class="data right" id="sum_100_50"></td><td class="data right" id="sum_100_30"></td><td class="data right" id="sum_100_10"></td>
+    <td class="data right" id="light_100"></td>
+    <td class="data right" id="light_100_100"></td><td class="data right" id="light_100_75"></td><td class="data right" id="light_100_50"></td><td class="data right" id="light_100_30"></td><td class="data right" id="light_100_10"></td>
+</tr>
+<tr>
+    <td class="data right">80%</td><td class="data right" id="bat_80"></td>
+    <td class="data right" id="chg_80_100"></td><td class="data right" id="chg_80_75"></td><td class="data right" id="chg_80_50"></td><td class="data right" id="chg_80_30"></td><td class="data right" id="chg_80_10"></td>
+    <td class="data right" id="sum_80_100"></td><td class="data right" id="sum_80_75"></td><td class="data right" id="sum_80_50"></td><td class="data right" id="sum_80_30"></td><td class="data right" id="sum_80_10"></td>
+    <td class="data right" id="light_80"></td>
+    <td class="data right" id="light_80_100"></td><td class="data right" id="light_80_75"></td><td class="data right" id="light_80_50"></td><td class="data right" id="light_80_30"></td><td class="data right" id="light_80_10"></td>
+</tr>
+<tr>
+    <td class="data right">60%</td><td class="data right" id="bat_60"></td>
+    <td class="data right" id="chg_60_100"></td><td class="data right" id="chg_60_75"></td><td class="data right" id="chg_60_50"></td><td class="data right" id="chg_60_30"></td><td class="data right" id="chg_60_10"></td>
+    <td class="data right" id="sum_60_100"></td><td class="data right" id="sum_60_75"></td><td class="data right" id="sum_60_50"></td><td class="data right" id="sum_60_30"></td><td class="data right" id="sum_60_10"></td>
+    <td class="data right" id="light_60"></td>
+    <td class="data right" id="light_60_100"></td><td class="data right" id="light_60_75"></td><td class="data right" id="light_60_50"></td><td class="data right" id="light_60_30"></td><td class="data right" id="light_60_10"></td>
+</tr>
+<tr>
+    <td class="data right">40%</td><td class="data right" id="bat_40"></td>
+    <td class="data right" id="chg_40_100"></td><td class="data right" id="chg_40_75"></td><td class="data right" id="chg_40_50"></td><td class="data right" id="chg_40_30"></td><td class="data right" id="chg_40_10"></td>
+    <td class="data right" id="sum_40_100"></td><td class="data right" id="sum_40_75"></td><td class="data right" id="sum_40_50"></td><td class="data right" id="sum_40_30"></td><td class="data right" id="sum_40_10"></td>
+    <td class="data right" id="light_40"></td>
+    <td class="data right" id="light_40_100"></td><td class="data right" id="light_40_75"></td><td class="data right" id="light_40_50"></td><td class="data right" id="light_40_30"></td><td class="data right" id="light_40_10"></td>
+</tr>
+<tr>
+    <td class="data right">20%</td><td class="data right" id="bat_20"></td>
+    <td class="data right" id="chg_20_100"></td><td class="data right" id="chg_20_75"></td><td class="data right" id="chg_20_50"></td><td class="data right" id="chg_20_30"></td><td class="data right" id="chg_20_10"></td>
+    <td class="data right" id="sum_20_100"></td><td class="data right" id="sum_20_75"></td><td class="data right" id="sum_20_50"></td><td class="data right" id="sum_20_30"></td><td class="data right" id="sum_20_10"></td>
+    <td class="data right" id="light_20"></td>
+    <td class="data right" id="light_20_100"></td><td class="data right" id="light_20_75"></td><td class="data right" id="light_20_50"></td><td class="data right" id="light_20_30"></td><td class="data right" id="light_20_10"></td>
+</tr>
+<tr>
+    <td class="data right">10%</td><td class="data right" id="bat_10"></td>
+    <td class="data right" id="chg_10_100"></td><td class="data right" id="chg_10_75"></td><td class="data right" id="chg_10_50"></td><td class="data right" id="chg_10_30"></td><td class="data right" id="chg_10_10"></td>
+    <td class="data right" id="sum_10_100"></td><td class="data right" id="sum_10_75"></td><td class="data right" id="sum_10_50"></td><td class="data right" id="sum_10_30"></td><td class="data right" id="sum_10_10"></td>
+    <td class="data right" id="light_10"></td>
+    <td class="data right" id="light_10_100"></td><td class="data right" id="light_10_75"></td><td class="data right" id="light_10_50"></td><td class="data right" id="light_10_30"></td><td class="data right" id="light_10_10"></td>
+</tr>
+</table>
+<br>
+<b>バッテリ残量</b><br>
+<table class="meter">
+<tr>
+<td class="d4 left">0%</td><td class="d4 bat_now right" id="bat_now1"></td><td class="d4 bat_now left" id="bat_now2"></td><td class="d4 right">100%</td>
+</tr>
+</table>
+<div id="meter-frame">
+    <div id="meter-bar"></div>
+    <div id="meter-mark"></div>
+</div>
+<table class="meter">
+    <tr><td class="d2 right">朝夕強制点灯するための電力確保</td><td class="d2 bat_now left" id="bat_result1"></tr>
+    <tr><td class="d2 right">今から3時間点灯するための電力確保</td><td class="d2 bat_now left" id="bat_result2"></tr>
+</table>
+</body>
+</html>
