@@ -1,20 +1,3 @@
-table.none {
-    border-collapse: collapse;
-    border: none;
-}
-
-th, td.none {
-    border: none;
-}
-
-th.w200 {
-    width: 200px;
-}
-
-td.w200 {
-    width: 200px;
-}
-
 table.data {
     border-collapse: collapse;
     border: 1px black solid;
@@ -24,15 +7,34 @@ th.data {
     border: 1px black solid;
 }
 
+
 td.data {
     text-align: center;
     border: 1px black solid;
 }
 
-th.light, td.light {
+.right {
+    text-align: right;
+}
+
+.left {
+    text-align: left;
+}
+
+.center {
     text-align: center;
+}
+
+.w50 {
+    width: 50px;
+}
+
+.w100 {
     width: 100px;
-    border: none;
+}
+
+div.moon_emoji {
+    font-size: 50px;
 }
 
 span.location {
@@ -54,15 +56,68 @@ div.myChart {
     height: 200px;
   }
 
-img.led_img {
-    width: 50%;
-    height: 50%;
+div.caution {
+    background-color: greenyellow;
+    width: 400px;
+    display:none;
 }
 
-span.led_status {
-    font-size:xx-large;
+
+span.moon_phase {
+    font-size: xx-large;
 }
 
-span.humi {
-    font-size:x-large;
+td.ok {
+    background-color: pink;
+    font-weight: bold;
+}
+
+td.ng {
+    background-color: white;
+}
+
+
+/* メーターのデザイン */
+#meter-frame {
+    margin: 0 auto;
+    width: 80%;
+    height: 20px;
+    border-radius: 5px;
+    background-color:black;
+    display: flex;
+    padding: 2px 2px;
+}
+
+#meter-bar {
+    height: 20px;
+    background-color:yellow;
+    transition: 300ms;
+}
+
+#meter-mark {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    filter: saturate(500%);
+    box-shadow: 0 0 5px 3px rgb(200, 255, 255),
+                0 0 7px 7px rgb(100, 255, 255);
+}
+
+table.meter {
+    margin: 0 auto;
+    width: 80%;    
+}
+
+td.d4 {
+    width:calc(100%/4);
+}
+
+td.d2 {
+    width:calc(100%/2);
+}
+
+.bat_now {
+    font-size: x-large;
+    font-weight: bold;
 }
