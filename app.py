@@ -6,7 +6,9 @@ import random
 import RPi.GPIO as GPIO
 import dht11
 import time
+import datetime
 import subprocess
+from gpiozero import MCP3004
 
 app = Flask(__name__)
 my_ephem = Ephem()
@@ -23,12 +25,20 @@ GPIO.cleanup()
 GPIO.setup(pilot_pin, GPIO.OUT)
 GPIO.setup(led_pin, GPIO.OUT)
 
+Vref = 5
+
 for pin in light_pins:
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
     
 dict = {"temp":0, "humi":0}
 for pin in light_pins:
     dict[str(pin)] = 0
+
+def analog_read(ch):
+    adc = MCP3004(ch)
+#    volt = adc.value * Vref
+    return adc.value
+
 
 @app.route("/")
 def index():
@@ -59,7 +69,7 @@ def call_from_ajax():
         if status:
             cnt += 1
     dict["cnt"] = cnt
-    if cnt > 2:
+    if cnt < 3:
         dict["result"] = "LED ON"
         GPIO.output(led_pin, True)
     else:
@@ -70,11 +80,17 @@ def call_from_ajax():
     if result.is_valid():
         dict["temp"] = f"{result.temperature:.1f} ℃"
         dict["humi"] = f"{result.humidity:.1f} %"
-        print(dict["temp"])
 
     GPIO.output(pilot_pin, pilot_status)
     pilot_status = not pilot_status
     
+    # voltage
+    ana3 = analog_read(ch=3)
+    ana0 = analog_read(ch=0)
+    dict["ana3"] = int(ana3*100)
+    dict["ana0"] = int(ana0*100)
+    #print(dict["bat"])
+            
     return json.dumps(dict)
 
 if __name__ == "__main__":
