@@ -59,6 +59,51 @@ def date_plus():
     my_ephem.change_date(1)
     return render_template("index.html", ephem = my_ephem)
 
+
+# 温湿度
+@app.route("/getTemp", methods=["POST"])
+def getTemp():
+    result = sensor.read()
+    if result.is_valid():
+        dict["temp"] = f"{result.temperature:.1f} ℃"
+        dict["humi"] = f"{result.humidity:.1f} %"
+    else:
+        dict["temp"] = "N/A"
+        dict["humi"] = "N/A"
+    return json.dumps(dict)
+
+
+# 電圧
+@app.route("/getVolt", methods=["POST"])
+def getVolt():
+    ana3 = analog_read(ch=3)
+    ana0 = analog_read(ch=0)
+    dict["ana3"] = int(ana3*100)
+    dict["ana0"] = int(ana0*100)
+    return json.dumps(dict)
+
+
+# 光    
+@app.route("/getLight", methods=["POST"])
+def getLight():
+    global pilot_status
+    cnt = 0
+    for pin in light_pins:
+        status = GPIO.input(pin)
+        dict[str(pin)] = status
+        if status:
+            cnt += 1
+    dict["cnt"] = cnt
+    if cnt < 3:
+        dict["result"] = "LED ON"
+        GPIO.output(led_pin, True)
+    else:
+        dict["result"] = "LED OFF"
+        GPIO.output(led_pin, False)
+    return json.dumps(dict)
+    
+
+
 @app.route("/call_from_ajax", methods = ["POST"])
 def call_from_ajax():
     global pilot_status
@@ -89,9 +134,8 @@ def call_from_ajax():
     ana0 = analog_read(ch=0)
     dict["ana3"] = int(ana3*100)
     dict["ana0"] = int(ana0*100)
-    #print(dict["bat"])
             
     return json.dumps(dict)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
